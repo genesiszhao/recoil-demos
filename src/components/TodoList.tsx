@@ -1,11 +1,11 @@
-import React from "react";
-import { Todo, Todos, VisibilityFilter } from "../types";
+import React from 'react'
+import { Todo, Todos, VisibilityFilter } from '../types'
 
 type TodoListProps = {
-  todos: Todos;
-  onSwitchTodo: (id: string) => void;
-  onRemoveTodo: (id: string) => void;
-};
+  todos: Todos
+  onSwitchTodo: (id: string) => void
+  onRemoveTodo: (id: string) => void
+}
 
 function TodoList({ todos, onSwitchTodo, onRemoveTodo }: TodoListProps) {
   return (
@@ -15,30 +15,30 @@ function TodoList({ todos, onSwitchTodo, onRemoveTodo }: TodoListProps) {
           <div>
             <span
               style={{
-                color: _.completed ? "gray" : "blue",
+                color: _.completed ? 'gray' : 'blue',
               }}
             >
               {_.text}
             </span>
             <button
               onClick={() => {
-                onSwitchTodo(_.id);
+                onSwitchTodo(_.id)
               }}
             >
               complated
             </button>
             <button
               onClick={() => {
-                onRemoveTodo(_.id);
+                onRemoveTodo(_.id)
               }}
             >
               delete
             </button>
           </div>
-        );
+        )
       })}
     </div>
-  );
+  )
 }
 
-export default TodoList;
+export default TodoList

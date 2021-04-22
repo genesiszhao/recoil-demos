@@ -46,5 +46,11 @@
   },
   "devDependencies": {
     "@types/react": "^17.0.3"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "semi": false,
+    "singleQuote": true,
+    "printWidth": 120
   }
 }
