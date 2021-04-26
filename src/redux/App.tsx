@@ -1,6 +1,6 @@
 import React from 'react'
 import { createSlice, configureStore, PayloadAction } from '@reduxjs/toolkit'
-import { Provider, useDispatch, useSelector, useStore } from 'react-redux'
+import { Provider, useDispatch, useSelector } from 'react-redux'
 import { Todo, Todos } from '../types'
 import { nanoid } from 'nanoid'
 import TodoCreator from '../components/TodoCreator'
@@ -46,6 +46,27 @@ const store = configureStore({
 export type AppDispatch = typeof store.dispatch
 export type RootState = ReturnType<typeof store.getState>
 
+function useTodoList() {
+  const todoList = useSelector((state: RootState) => {
+    return state.todos
+  })
+  const dispatch = useDispatch()
+
+  const addTodo = React.useCallback((value: string) => {
+    dispatch(todosSlice.actions.addTodo(value))
+  }, [])
+
+  const removeTodo = React.useCallback((id: string) => {
+    dispatch(todosSlice.actions.removeTodo(id))
+  }, [])
+
+  const switchTodo = React.useCallback((id: string) => {
+    dispatch(todosSlice.actions.switchTodo(id))
+  }, [])
+
+  return { todoList, addTodo, removeTodo, switchTodo }
+}
+
 function App() {
   return (
     <Provider store={store}>
@@ -55,27 +76,12 @@ function App() {
 }
 
 function Content() {
-  const todos = useSelector((state: RootState) => {
-    return state.todos
-  })
-  const dispatch = useDispatch()
-
-  const onSubmit = React.useCallback((value: string) => {
-    dispatch(todosSlice.actions.addTodo(value))
-  }, [])
-
-  const onSwitchTodo = React.useCallback((id: string) => {
-    dispatch(todosSlice.actions.switchTodo(id))
-  }, [])
-
-  const onRemoveTodo = React.useCallback((id: string) => {
-    dispatch(todosSlice.actions.removeTodo(id))
-  }, [])
+  const { todoList, addTodo, removeTodo, switchTodo } = useTodoList()
 
   return (
     <div>
-      <TodoCreator defaultValue="" onSubmit={onSubmit} />
-      <TodoList todos={todos} onSwitchTodo={onSwitchTodo} onRemoveTodo={onRemoveTodo} />
+      <TodoCreator defaultValue="" onSubmit={addTodo} />
+      <TodoList todos={todoList} onSwitchTodo={switchTodo} onRemoveTodo={removeTodo} />
     </div>
   )
 }

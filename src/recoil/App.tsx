@@ -1,19 +1,63 @@
 import React from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { RecoilRoot, atom, useRecoilState } from 'recoil'
+import { nanoid } from 'nanoid'
+import { Todos } from '../types'
+import TodoCreator from '../components/TodoCreator'
+import TodoList from '../components/TodoList'
+
+const todoListState = atom<Todos>({
+  key: 'todoListState',
+  default: [],
+})
+
+function useTodoList() {
+  const [todoList, setTodoList] = useRecoilState(todoListState)
+
+  const addTodo = React.useCallback((value: string) => {
+    setTodoList([
+      ...todoList,
+      {
+        id: nanoid(),
+        text: value,
+        completed: false,
+      },
+    ])
+  }, [])
+
+  const removeTodo = React.useCallback((id: string) => {
+    setTodoList(todoList.filter((_) => _.id === id))
+  }, [])
+
+  const switchTodo = React.useCallback((id: string) => {
+    setTodoList(
+      todoList.map((_) => {
+        if (_.id === id) {
+          return { ..._, completed: !_.completed }
+        } else {
+          return _
+        }
+      })
+    )
+  }, [])
+
+  return { todoList, addTodo, removeTodo, switchTodo }
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
+    <RecoilRoot>
+      <Content />
+    </RecoilRoot>
+  )
+}
+
+function Content() {
+  const { todoList, addTodo, removeTodo, switchTodo } = useTodoList()
+
+  return (
+    <div>
+      <TodoCreator defaultValue="" onSubmit={addTodo} />
+      <TodoList todos={todoList} onSwitchTodo={switchTodo} onRemoveTodo={removeTodo} />
     </div>
   )
 }

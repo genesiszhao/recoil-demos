@@ -1,5 +1,5 @@
 import React from 'react'
-import { Todo, Todos, VisibilityFilter } from '../types'
+import { Todos } from '../types'
 
 type TodoListProps = {
   todos: Todos
@@ -20,20 +20,8 @@ function TodoList({ todos, onSwitchTodo, onRemoveTodo }: TodoListProps) {
             >
               {_.text}
             </span>
-            <button
-              onClick={() => {
-                onSwitchTodo(_.id)
-              }}
-            >
-              complated
-            </button>
-            <button
-              onClick={() => {
-                onRemoveTodo(_.id)
-              }}
-            >
-              delete
-            </button>
+            <button onClick={() => onSwitchTodo(_.id)}>complated</button>
+            <button onClick={() => onRemoveTodo(_.id)}>delete</button>
           </div>
         )
       })}

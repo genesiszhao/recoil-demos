@@ -11,11 +11,15 @@
     "@types/node": "^12.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-redux": "^7.1.16",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
     "nanoid": "^3.1.22",
+    "prettier": "^2.2.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.3",
     "react-scripts": "4.0.3",
+    "recoil": "^0.2.0",
     "redux": "^4.0.5",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
@@ -52,5 +56,15 @@
     "semi": false,
     "singleQuote": true,
     "printWidth": 120
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
   }
 }

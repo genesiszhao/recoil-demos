@@ -3,5 +3,11 @@
     "id": "string",
     "text": "string",
     "completed": "boolean"
+  },
+  "User": {
+    "name": "string",
+    "age": "number",
+    "desc": "string",
+    "email": "yi.zhao@trip.com"
   }
 }
