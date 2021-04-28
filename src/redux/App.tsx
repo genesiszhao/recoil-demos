@@ -1,7 +1,7 @@
 import React from 'react'
 import { createSlice, configureStore, PayloadAction } from '@reduxjs/toolkit'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { Todo, Todos } from '../types'
+import { Todo, Todos, VisibilityFilter, SHOW_ALL, SHOW_COMPLATED, SHOW_UNCOMPLATED } from '../types'
 import { nanoid } from 'nanoid'
 import TodoCreator from '../components/TodoCreator'
 import TodoList from '../components/TodoList'
@@ -37,9 +37,20 @@ const todosSlice = createSlice({
   },
 })
 
+// const visiableFilterSlice = createSlice({
+//   name: 'visiableFilter',
+//   initialState: 'SHOW_ALL' as VisibilityFilter,
+//   reducers: {
+//     changeFilter: (_, action: PayloadAction<VisibilityFilter>) => {
+//       return action.payload
+//     },
+//   },
+// })
+
 const store = configureStore({
   reducer: {
     todos: todosSlice.reducer,
+    // visiableFilter: visiableFilterSlice.reducer,
   },
 })
 
@@ -66,6 +77,26 @@ function useTodoList() {
 
   return { todoList, addTodo, removeTodo, switchTodo }
 }
+
+// function useFilterTodoList() {
+//   const todoList = useSelector((state: RootState) => {
+//     return state.todos
+//   })
+//   const visiableFilter = useSelector((state: RootState) => {
+//     return state.visiableFilter
+//   })
+
+//   switch (visiableFilter) {
+//     case SHOW_ALL:
+//       return todoList
+//     case SHOW_COMPLATED:
+//       return todoList.filter((_) => _.completed)
+//     case SHOW_UNCOMPLATED:
+//       return todoList.filter((_) => !_.completed)
+//     default:
+//       return []
+//   }
+// }
 
 function App() {
   return (
