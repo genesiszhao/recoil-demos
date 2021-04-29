@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler } from 'react'
+import React, { useEffect, ChangeEventHandler } from 'react'
 
 type TodoCreatorProps = {
   defaultValue: string
@@ -8,7 +8,7 @@ type TodoCreatorProps = {
 function useFormInput(defaultValue: string) {
   const [value, setValue] = React.useState(defaultValue)
 
-  const handleChange: ChangeEventHandler<HTMLInputElement> = React.useCallback((event) => {
+  const change: ChangeEventHandler<HTMLInputElement> = React.useCallback((event) => {
     setValue(event.target.value)
   }, [])
 
@@ -16,21 +16,45 @@ function useFormInput(defaultValue: string) {
     setValue('')
   }, [])
 
-  return { value, handleChange, reset }
+  return { value, change, reset }
 }
 
 function TodoCreator({ defaultValue, onSubmit }: TodoCreatorProps) {
-  const input = useFormInput(defaultValue)
+  const { value, change, reset } = useFormInput(defaultValue)
 
-  const handleClick = () => {
-    onSubmit(input.value)
-    input.reset()
-  }
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.code === 'Enter') {
+        onSubmit(value)
+        reset()
+      }
+    }
+    document.addEventListener('keyup', handler)
+
+    return () => {
+      document.removeEventListener('keyup', handler)
+    }
+  })
 
   return (
-    <div>
-      <input type="text" name="todo context" {...input} />
-      <button onClick={() => handleClick()}></button>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+      }}
+    >
+      <input
+        style={{
+          flex: 1,
+          fontSize: 19,
+          fontWeight: 'bold',
+        }}
+        type="text"
+        name="todo context"
+        value={value}
+        onChange={change}
+        autoComplete="off"
+      />
     </div>
   )
 }
