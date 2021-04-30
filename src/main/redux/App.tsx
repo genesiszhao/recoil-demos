@@ -2,7 +2,7 @@ import React from 'react'
 import { createSlice, configureStore, PayloadAction } from '@reduxjs/toolkit'
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { Todo, Todos, VisibilityFilter } from '../../types'
-import { SHOW_ALL, SHOW_COMPLATED, SHOW_UNCOMPLATED } from '../../constants'
+import { SHOW_COMPLATED, SHOW_UNCOMPLATED } from '../../constants'
 import { nanoid } from 'nanoid'
 import TodoCreator from '../../components/TodoCreator'
 import TodoList from '../../components/TodoList'
@@ -62,18 +62,7 @@ export type RootState = ReturnType<typeof store.getState>
 // 为todoList创建 增删改查 Hooks
 function useTodoList() {
   const todoList = useSelector((state: RootState) => {
-    switch (state.visibilityFilter) {
-      case SHOW_ALL:
-        return state.todos
-      case SHOW_COMPLATED:
-        return state.todos.filter((_) => _.completed)
-      case SHOW_UNCOMPLATED:
-        return state.todos.filter((_) => !_.completed)
-      default:
-        return []
-    }
-
-    // return state.todos
+    return state.todos
   })
   const dispatch = useDispatch()
 
@@ -117,15 +106,30 @@ function useVisibilityFilter() {
   return { visibilityFilter, onChangeFilter }
 }
 
+function useFilteredTodoList() {
+  const filteredTodoList: Todos = useSelector((state: RootState) => {
+    switch (state.visibilityFilter) {
+      case SHOW_COMPLATED:
+        return state.todos.filter((_) => _.completed)
+      case SHOW_UNCOMPLATED:
+        return state.todos.filter((_) => !_.completed)
+      default:
+        return state.todos
+    }
+  })
+  return filteredTodoList
+}
+
 function Content() {
-  const { todoList, addTodo, removeTodo, switchTodo } = useTodoList()
+  const { addTodo, removeTodo, switchTodo } = useTodoList()
   const { visibilityFilter, onChangeFilter } = useVisibilityFilter()
+  const filteredTodoList = useFilteredTodoList()
 
   return (
     <div>
       <TodoCreator defaultValue="" onSubmit={addTodo} />
       <ChangeFilter currentFilter={visibilityFilter} onChange={onChangeFilter} />
-      <TodoList todos={todoList} onSwitchTodo={switchTodo} onRemoveTodo={removeTodo} />
+      <TodoList todos={filteredTodoList} onRemoveTodo={removeTodo} onSwitchTodo={switchTodo} />
     </div>
   )
 }

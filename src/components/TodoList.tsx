@@ -8,6 +8,7 @@ type TodoListProps = {
 }
 
 function TodoList({ todos, onSwitchTodo, onRemoveTodo }: TodoListProps) {
+  console.log('update')
   return (
     <div
       style={{

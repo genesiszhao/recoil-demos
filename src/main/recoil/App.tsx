@@ -1,8 +1,8 @@
 import React from 'react'
-import { RecoilRoot, atom, useRecoilState, useRecoilValue } from 'recoil'
+import { RecoilRoot, atom, useRecoilState, useRecoilValue, selector } from 'recoil'
 import { nanoid } from 'nanoid'
 import { Todos, VisibilityFilter } from '../../types'
-import { SHOW_ALL, SHOW_COMPLATED, SHOW_UNCOMPLATED } from '../../constants'
+import { SHOW_COMPLATED, SHOW_UNCOMPLATED } from '../../constants'
 import TodoCreator from '../../components/TodoCreator'
 import TodoList from '../../components/TodoList'
 import ChnageFilter from '../../components/ChangeFilter'
@@ -15,7 +15,6 @@ const todoListState = atom<Todos>({
 // 为todoList创建 增删改查 Hooks
 function useTodoList() {
   const [todoList, setTodoList] = useRecoilState(todoListState)
-  const visibilityFilter = useRecoilValue(visibilityFilterState)
 
   const addTodo = React.useCallback(
     (value: string) => {
@@ -54,19 +53,7 @@ function useTodoList() {
   )
 
   return {
-    // todoList,
-    todoList: todoList.filter((_) => {
-      switch (visibilityFilter) {
-        case SHOW_ALL:
-          return true
-        case SHOW_COMPLATED:
-          return _.completed
-        case SHOW_UNCOMPLATED:
-          return !_.completed
-        default:
-          return []
-      }
-    }),
+    todoList,
     addTodo,
     removeTodo,
     switchTodo,
@@ -92,15 +79,33 @@ function useVisibilityFilter() {
   return { visibilityFilter, changeFilter }
 }
 
+const filteredTodoListState = selector({
+  key: 'filteredTodoListState',
+  get: ({ get }) => {
+    const filter = get(visibilityFilterState)
+    const list = get(todoListState)
+
+    switch (filter) {
+      case SHOW_COMPLATED:
+        return list.filter((item) => item.completed)
+      case SHOW_UNCOMPLATED:
+        return list.filter((item) => !item.completed)
+      default:
+        return list
+    }
+  },
+})
+
 function Content() {
-  const { todoList, addTodo, removeTodo, switchTodo } = useTodoList()
+  const { addTodo, removeTodo, switchTodo } = useTodoList()
   const { visibilityFilter, changeFilter } = useVisibilityFilter()
+  const filteredTodoList = useRecoilValue(filteredTodoListState)
 
   return (
     <div>
       <TodoCreator defaultValue="" onSubmit={addTodo} />
       <ChnageFilter currentFilter={visibilityFilter} onChange={changeFilter} />
-      <TodoList todos={todoList} onSwitchTodo={switchTodo} onRemoveTodo={removeTodo} />
+      <TodoList todos={filteredTodoList} onRemoveTodo={removeTodo} onSwitchTodo={switchTodo} />
     </div>
   )
 }
