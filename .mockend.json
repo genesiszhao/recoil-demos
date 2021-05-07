@@ -1,16 +1,13 @@
 {
-  "User": {
-    "name": "string",
-    "age": "int",
-    "desc": "string",
-    "email": "string",
-    "number": "string",
+  "Post": {
+    "title": "string",
+    "views": "int",
+    "published": "boolean",
     "createdAt": "date",
-    "blogs": "Blog[]"
+    "comments": "Comment[]"
   },
-  "Blog": {
-    "createAt": "date",
-    "content": "string",
-    "support": "int"
+  "Comment": {
+    "body": "string",
+    "post": "Post"
   }
 }
