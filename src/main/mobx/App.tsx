@@ -14,7 +14,7 @@ import ChangeFilter from '../../components/ChangeFilter'
 
 // 定义状态并使之可观察
 class TodoStore {
-  todoList: Todos = []
+  todoList: Todo[] = []
   visibilityFilter: VisibilityFilter = SHOW_ALL
   constructor() {
     makeObservable(this, {
@@ -24,6 +24,7 @@ class TodoStore {
       addTodo: action,
       removeTodo: action,
       switchTodo: action,
+      onChangeFilter: action,
     })
   }
   // 它们不应有副作用或更新其他可观察物。
@@ -39,23 +40,29 @@ class TodoStore {
     }
   }
   addTodo(value: string) {
-    this.todoList.push({
-      id: nanoid(),
-      text: value,
-      completed: false,
-    })
+    this.todoList = [
+      ...this.todoList,
+      {
+        id: nanoid(),
+        text: value,
+        completed: false,
+      },
+    ]
   }
 
   removeTodo(id: string) {
-    const index = this.todoList.findIndex((_) => _.id === id)
-
-    this.todoList.splice(index, 1)
+    this.todoList = this.todoList.filter((_) => _.id !== id)
   }
 
   switchTodo(id: string) {
-    this.todoList.forEach((_) => {
-      if (_.id === id) {
-        _.completed = !_.completed
+    this.todoList = this.todoList.map((_) => {
+      if (_.id !== id) {
+        return _
+      } else {
+        return {
+          ..._,
+          completed: !_.completed,
+        }
       }
     })
   }
