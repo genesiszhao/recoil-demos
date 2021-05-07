@@ -1,13 +1,16 @@
 {
-  "Todo": {
-    "id": "string",
-    "text": "string",
-    "completed": "boolean"
-  },
   "User": {
     "name": "string",
-    "age": "number",
+    "age": "int",
     "desc": "string",
-    "email": "yi.zhao@trip.com"
+    "email": "string",
+    "number": "string",
+    "createdAt": "date",
+    "blogs": "Blog[]"
+  },
+  "Blog": {
+    "createAt": "date",
+    "content": "string",
+    "support": "int"
   }
 }
