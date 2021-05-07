@@ -1,7 +1,7 @@
 import React from 'react'
-import { makeObservable, observable, action, computed } from 'mobx'
+import { makeObservable, observable, action, computed, toJS } from 'mobx'
 import { Provider, inject, observer, useLocalStore } from 'mobx-react'
-import { Todo, Todos, VisibilityFilter } from '../../types'
+import { Todos, VisibilityFilter } from '../../types'
 import { SHOW_ALL, SHOW_COMPLATED, SHOW_UNCOMPLATED } from '../../constants'
 import { nanoid } from 'nanoid'
 import TodoCreator from '../../components/TodoCreator'
@@ -11,6 +11,17 @@ import ChangeFilter from '../../components/ChangeFilter'
 // 不支持多个数据共同computed
 // mvc模式又回到最初的困境
 // 没有对hooks相应的支持，useLocalObaserable，只是useState的语法糖
+class Todo {
+  id = nanoid()
+  text = ''
+  completed = false
+  constructor(value: string) {
+    makeObservable(this, {
+      completed: observable,
+    })
+    this.text = value
+  }
+}
 
 // 定义状态并使之可观察
 class TodoStore {

@@ -12,6 +12,28 @@ const todoListState = atom<Todos>({
   default: [],
 })
 
+const visibilityFilterState = atom<VisibilityFilter>({
+  key: 'visibilityFilterState',
+  default: 'SHOW_ALL',
+})
+
+const filteredTodoListState = selector({
+  key: 'filteredTodoListState',
+  get: ({ get }) => {
+    const filter = get(visibilityFilterState)
+    const list = get(todoListState)
+
+    switch (filter) {
+      case SHOW_COMPLATED:
+        return list.filter((item) => item.completed)
+      case SHOW_UNCOMPLATED:
+        return list.filter((item) => !item.completed)
+      default:
+        return list
+    }
+  },
+})
+
 // 为todoList创建 增删改查 Hooks
 function useTodoList() {
   const [todoList, setTodoList] = useRecoilState(todoListState)
@@ -39,15 +61,7 @@ function useTodoList() {
 
   const switchTodo = React.useCallback(
     (id: string) => {
-      setTodoList(
-        todoList.map((_) => {
-          if (_.id === id) {
-            return { ..._, completed: !_.completed }
-          } else {
-            return _
-          }
-        })
-      )
+      setTodoList(todoList.map((_) => (_.id === id ? { ..._, completed: !_.completed } : _)))
     },
     [todoList, setTodoList]
   )
@@ -59,11 +73,6 @@ function useTodoList() {
     switchTodo,
   }
 }
-
-const visibilityFilterState = atom<VisibilityFilter>({
-  key: 'visibilityFilterState',
-  default: 'SHOW_ALL',
-})
 
 // 为visibilityFilter创建 改查 Hooks
 function useVisibilityFilter() {
@@ -78,23 +87,6 @@ function useVisibilityFilter() {
 
   return { visibilityFilter, changeFilter }
 }
-
-const filteredTodoListState = selector({
-  key: 'filteredTodoListState',
-  get: ({ get }) => {
-    const filter = get(visibilityFilterState)
-    const list = get(todoListState)
-
-    switch (filter) {
-      case SHOW_COMPLATED:
-        return list.filter((item) => item.completed)
-      case SHOW_UNCOMPLATED:
-        return list.filter((item) => !item.completed)
-      default:
-        return list
-    }
-  },
-})
 
 function Content() {
   const { addTodo, removeTodo, switchTodo } = useTodoList()

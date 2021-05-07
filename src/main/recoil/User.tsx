@@ -14,9 +14,9 @@ const currentUserIDState = atom({
 const currentUserNameQuery = selector({
   key: 'CurrentUserName',
   get: async ({ get }) => {
-    const response = await myDBQuery({
-      userID: get(currentUserIDState),
-    })
-    return response.name
+    // const response = await myDBQuery({
+    //   userID: get(currentUserIDState),
+    // })
+    // return response.name
   },
 })
