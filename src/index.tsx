@@ -8,10 +8,13 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { RecoilRoot } from 'recoil'
 import { Counter } from './main/recoil/Counter'
+import { PostInfo } from './main/recoil/Post'
 
 ReactDOM.render(
   <RecoilRoot>
-    <Counter />
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <PostInfo />
+    </React.Suspense>
   </RecoilRoot>,
   document.getElementById('root')
 )
