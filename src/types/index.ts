@@ -8,4 +8,12 @@ export type Todos = Todo[]
 
 export type VisibilityFilter = 'SHOW_ALL' | 'SHOW_COMPLATED' | 'SHOW_UNCOMPLATED'
 
-export type Post = { createdAt: string; id: number; published: boolean; title: string; views: number }
+export type User = {
+  id: number,
+  name: string,
+  age: number,
+  gender: string,
+  email: string,
+  phone: string,
+  watchs: number[]
+}

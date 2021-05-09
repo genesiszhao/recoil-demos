@@ -18,6 +18,7 @@ class Todo {
   constructor(value: string) {
     makeObservable(this, {
       completed: observable,
+      text: observable,
     })
     this.text = value
   }
@@ -51,31 +52,26 @@ class TodoStore {
     }
   }
   addTodo(value: string) {
-    this.todoList = [
-      ...this.todoList,
-      {
-        id: nanoid(),
-        text: value,
-        completed: false,
-      },
-    ]
+    this.todoList.push(new Todo(value))
   }
 
   removeTodo(id: string) {
-    this.todoList = this.todoList.filter((_) => _.id !== id)
+    const index = this.todoList.findIndex((_) => _.id === id)
+    this.todoList.splice(index, 1)
   }
 
   switchTodo(id: string) {
-    this.todoList = this.todoList.map((_) => {
-      if (_.id !== id) {
-        return _
-      } else {
-        return {
-          ..._,
-          completed: !_.completed,
-        }
-      }
-    })
+    this.todoList.forEach((_) => (_.id === id ? (_.completed = !_.completed) : null))
+    // this.todoList = this.todoList.map((_) => {
+    //   if (_.id !== id) {
+    //     return _
+    //   } else {
+    //     return {
+    //       ..._,
+    //       completed: !_.completed,
+    //     }
+    //   }
+    // })
   }
 
   onChangeFilter(filter: VisibilityFilter) {
@@ -84,10 +80,10 @@ class TodoStore {
 }
 
 const todoStore = new TodoStore()
+
 type ContentProps = {
   todoStore: TodoStore
 }
-
 const Content = observer(({ todoStore }: ContentProps) => {
   return (
     <div>
