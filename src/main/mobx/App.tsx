@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeObservable, observable, action, computed, toJS } from 'mobx'
+import { makeObservable, makeAutoObservable, observable, action, computed, toJS } from 'mobx'
 import { Provider, inject, observer, useLocalStore } from 'mobx-react'
 import { Todos, VisibilityFilter } from '../../types'
 import { SHOW_ALL, SHOW_COMPLATED, SHOW_UNCOMPLATED } from '../../constants'
@@ -15,29 +15,30 @@ class Todo {
   id = nanoid()
   text = ''
   completed = false
-  constructor(value: string) {
+
+  constructor(text: string) {
     makeObservable(this, {
-      completed: observable,
       text: observable,
+      completed: observable,
+      switch: action,
     })
-    this.text = value
+    this.text = text
+  }
+
+  switch() {
+    this.completed = !this.completed
   }
 }
 
-// 定义状态并使之可观察
 class TodoStore {
   todoList: Todo[] = []
   visibilityFilter: VisibilityFilter = SHOW_ALL
-  constructor() {
+  constructor(todoList: Todo[]) {
     makeObservable(this, {
       todoList: observable,
       visibilityFilter: observable,
-      filteredTodoList: computed,
-      addTodo: action,
-      removeTodo: action,
-      switchTodo: action,
-      onChangeFilter: action,
     })
+    this.todoList = todoList
   }
   // 它们不应有副作用或更新其他可观察物。
   // 避免创建和返回新的可观测值。
@@ -52,26 +53,32 @@ class TodoStore {
     }
   }
   addTodo(value: string) {
-    this.todoList.push(new Todo(value))
+    // this.todoList.push(new Todo(value))
+    this.todoList = [...this.todoList, new Todo(value)]
   }
 
   removeTodo(id: string) {
-    const index = this.todoList.findIndex((_) => _.id === id)
-    this.todoList.splice(index, 1)
+    this.todoList = this.todoList.filter((_) => id !== _.id)
+
+    // const index = this.todoList.findIndex((_) => _.id === id)
+
+    // this.todoList.splice(index, 1)
   }
 
   switchTodo(id: string) {
-    this.todoList.forEach((_) => (_.id === id ? (_.completed = !_.completed) : null))
-    // this.todoList = this.todoList.map((_) => {
-    //   if (_.id !== id) {
-    //     return _
-    //   } else {
-    //     return {
-    //       ..._,
-    //       completed: !_.completed,
-    //     }
+    // this.todoList.forEach((_) => {
+    //   if (_.id === id) {
+    //     _.switch()
     //   }
     // })
+    this.todoList = this.todoList.map((_) => {
+      if (id !== _.id) {
+        return _
+      } else {
+        _.switch()
+        return _
+      }
+    })
   }
 
   onChangeFilter(filter: VisibilityFilter) {
@@ -79,7 +86,7 @@ class TodoStore {
   }
 }
 
-const todoStore = new TodoStore()
+const store = new TodoStore(observable([]))
 
 type ContentProps = {
   todoStore: TodoStore
@@ -116,7 +123,7 @@ const Content = observer(({ todoStore }: ContentProps) => {
 export default function App() {
   return (
     <div>
-      <Content todoStore={todoStore} />
+      <Content todoStore={store} />
     </div>
   )
 }
