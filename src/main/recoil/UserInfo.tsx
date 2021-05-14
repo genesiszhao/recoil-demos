@@ -26,6 +26,7 @@ const currentUserNameQuery = selector({
     return response.data?.name
   },
 })
+
 export function UserInfo() {
   const userName = useRecoilValue(currentUserNameQuery)
 
@@ -36,6 +37,7 @@ export function UserInfo() {
   )
 }
 
+// ---------------------------------------------------
 // 通过参数完成数据的请求
 const userNameQuery = selectorFamily({
   key: 'UserName',
@@ -60,6 +62,7 @@ export function UserInfoWithParam({ userID }: UserDetailWithParamProps) {
   )
 }
 
+// ---------------------------------------------------
 // 根据传入的ID请求用户信息
 const userInfoQuery = selectorFamily({
   key: 'UserInfoQuery',
@@ -108,6 +111,7 @@ export function CurrentUserInfo() {
   )
 }
 
+// ---------------------------------------------------
 // 不实用Suspense
 export function UserInfoWithoutSuspense({ userID }: { userID: number }) {
   const userNameLoadable = useRecoilValueLoadable(userNameQuery(userID))

@@ -86,7 +86,7 @@ class TodoStore {
   }
 }
 
-const store = new TodoStore(observable([]))
+const store = new TodoStore([])
 
 type ContentProps = {
   todoStore: TodoStore
